@@ -8,6 +8,8 @@
         "array": "cpp",
         "initializer_list": "cpp",
         "regex": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "iomanip": "cpp",
+        "iostream": "cpp"
     }
 }
