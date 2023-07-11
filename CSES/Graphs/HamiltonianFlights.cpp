@@ -1,44 +1,53 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int MOD = 1e9 + 7;
-int check;
-long long f(int pos, vector<vector<int>> &h, int mask, int n, vector<vector<int>> &dp)
-{
-    // base case
-    if (pos == n)
-        return mask == check ? 1 : 0;
+using ll = long long;
 
-    if (dp[pos][mask] != -1)
-        return dp[pos][mask];
+const int MAX_N = 20;
+const ll MOD = (ll)1e9 + 7;
 
-    // rec
-    long long ans = 0;
-    for (int i = 0; i < h[pos].size(); i++)
-    {
-        if(!(mask&(1<<h[pos][i])))
-            ans += f(h[pos][i], h, mask ^ (1 << pos), n, dp) % MOD;
-        ans %= MOD;
-    }
-    return dp[pos][mask] = ans;
-}
+ll dp[1 << MAX_N][MAX_N];
+// come_from[i] contains the cities that can fly to i
+vector<int> come_from[MAX_N];
 
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr); 
-    int n, m;
-    cin >> n >> m;
-    check = pow(2, n) - 2;
-    vector<vector<int>> h(n + 1);
-    for (int i = 0; i < m; i++)
+    int city_num;
+    int flight_num;
+    cin >> city_num >> flight_num;
+    for (int f = 0; f < flight_num; f++)
     {
-        int a, b;
-        cin >> a >> b;
-        h[a].push_back(b);
+        int start, end;
+        cin >> start >> end;
+        come_from[--end].push_back(--start);
     }
-    vector<vector<int>> dp(n, vector<int>(pow(2, n), -1));
-    cout << f(1, h, 0, n, dp) << endl;
 
-    return 0;
+    dp[1][0] = 1;
+    for (int s = 2; s < 1 << city_num; s++)
+    {
+        // only consider subsets that have the first city
+        if ((s & (1 << 0)) == 0)
+            continue;
+        // also only consider subsets with the last city if it's the full subset
+        if ((s & (1 << (city_num - 1))) && s != ((1 << city_num) - 1))
+            continue;
+
+        for (int end = 0; end < city_num; end++)
+        {
+            if ((s & (1 << end)) == 0)
+                continue;
+
+            // the subset that doesn't include the current end
+            int prev = s - (1 << end);
+            for (int j : come_from[end])
+            {
+                if ((s & (1 << j)))
+                {
+                    dp[s][end] += dp[prev][j];
+                    dp[s][end] %= MOD;
+                }
+            }
+        }
+    }
+    cout << dp[(1 << city_num) - 1][city_num - 1] << '\n';
 }

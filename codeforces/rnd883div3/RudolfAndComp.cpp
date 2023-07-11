@@ -1,11 +1,4 @@
-#pragma GCC optimize("Ofast")
-#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,fma")
-#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
-#include <complex>
-#include <iomanip>
-#include <fstream>
-
 using namespace std;
 
 typedef long long ll;
@@ -39,54 +32,57 @@ double eps = 1e-12;
     cout.tie(NULL)
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
+#define int long long 
 
 void solve()
 {
 
-    int n, m, total;
-    cin >> n >> m >> total;
-
-    vp32 arr;
-    pair<int, int> rudolph;
-    for (int i = 0; i < n; i++)
-    {
-        int time_used = 0;
-        int penalty = 0, cnt = 0;
+    int n, q, time;
+    cin >> n >> q >> time;
+    vector< pair<int, int> > ans;
+    pair<int, int> rud;
+    for (int i = 0; i < n; i++){
         priority_queue<int, vector<int>, greater<int>> pq;
-        for (int j = 0; j < m; j++)
-        {
+        forn(j, q){
             int x;
-            cin >> x;
-            pq.push(x);
+            cin >> x; 
+            pq.push(x); 
         }
-        while (!pq.empty() && (time_used + pq.top()) <= total)
-        {
-            penalty += time_used + pq.top();
-            time_used += pq.top();
+        int total_time = 0, penalty = 0;
+        int cnt = 0;
+        while(!pq.empty() && (pq.top()+total_time)<=time ){
             cnt++;
-            pq.pop();
+            total_time += pq.top();
+            penalty += total_time;
+            pq.pop(); 
         }
-        arr.push_back({cnt, penalty});
-        if (i == 0)
-            rudolph = {cnt, penalty};
+        ans.push_back({cnt, penalty}); 
+        if(i==0) rud = {cnt, penalty}; 
     }
-    sort(arr.begin(), arr.end(), [](const pair<int, int> &a, const pair<int, int> &b)
-         { return a.first == b.first ? a.second < b.second : a.first > b.first; });
+    sort(ans.begin(), ans.end(), [](const auto &a, const auto &b){
+        if(a.first != b.first)
+            return a.first > b.first;
+        return a.second < b.second; 
+    });
 
-    for (int i = 0; i < n; i++)
-    {
-        if (arr[i].first == rudolph.first && arr[i].second == rudolph.second)
-        {
-            cout << (i + 1) << endl;
-            return;
+    // for(auto x: ans){
+    //     cout << x.first << "," << x.second << ' '; 
+    // }
+    // cout<<endl; 
+
+    for (int i = 0; i < n; i++){
+        
+        if(ans[i].second == rud.second && ans[i].first == rud.first){
+            cout<<(i+1)<<endl;
+            return; 
         }
-    }
-    return;
+    } 
 }
-int main()
+signed main()
 {
     // freopen("input.txt", "r", stdin);
     // freopen("output.txt", "w", stdout);
+
     fast_cin();
     ll t;
     cin >> t;
