@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "*.ejs": "html",
+        "bitset": "cpp",
+        "rope": "cpp",
+        "slist": "cpp",
+        "valarray": "cpp",
+        "array": "cpp",
+        "initializer_list": "cpp",
+        "regex": "cpp",
+        "utility": "cpp",
+        "iomanip": "cpp",
+        "iostream": "cpp"
+    }
+}
