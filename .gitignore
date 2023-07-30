@@ -6,4 +6,5 @@ RoundTrip*
 # Unignore all dirs
 !*/
 *.exe
+itmo_course
 
