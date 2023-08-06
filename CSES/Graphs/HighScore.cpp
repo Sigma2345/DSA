@@ -1,60 +1,89 @@
-#include<bits/stdc++.h>
-#define INF INT_MAX
-using namespace std ;
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define minval -1e17
 
-int main(){
+signed main() {
 
-	#ifndef ONLINE_JUDGE
-	freopen("input.txt","r",stdin); //file input.txt is opened in reading mode i.e "r"
-	freopen("output.txt","w",stdout);  //file output.txt is opened in writing mode i.e "w"
-	#endif
+#ifndef ONLINE_JUDGE
+  freopen("input.txt", "r",
+          stdin); // file input.txt is opened in reading mode i.e "r"
+  freopen("output.txt", "w",
+          stdout); // file output.txt is opened in writing mode i.e "w"
+#endif
 
-	int n, m ; 
-	cin>>n>>m ; 
+  int n, m;
+  cin >> n >> m;
 
-	// since we need to take maximum score reverse the path weights 
-	// and calculate minimum weight possible
-	vector<vector< pair<int, int> > > v(n+1) ;
-	for(int i = 0 ; i<m ; i++){
-		int x, y, dist ; 
-		cin>>x>>y>>dist ; 
-		v[x].push_back({y, -dist}); 
-	} 
+  // since we need to take maximum score reverse the path weights
+  // and calculate minimum weight possible
+  vector<vector<int>> v;
+  vector<vector<int>> adj1(n + 1);
+  vector<bool> vis1(n+1, false); 
+  for (int i = 0; i < m; i++) {
+    int x, y, dist;
+    cin >> x >> y >> dist;
+    v.push_back({x, y, dist});
+    adj1[v[i][0]].push_back(v[i][1]);
+  }
 
-	vector<int> distFromSrc(n+1, INF) ;
-	distFromSrc[1] = 0 ; 
-	for(int i = 1 ; i<=n ; i++){
-		for(int j = 1; j<=n ; j++){
-			for(int k =0; k < v[j].size() ; k++){
-				int dist1 = v[j][k].second, node2 = v[j][k].first ;
-				if(distFromSrc[node2] > distFromSrc[j] + dist1){
-					distFromSrc[node2] = distFromSrc[j] + dist1 ;
-					cout<<j<<' '<<node2<<' '<<distFromSrc[node2]<<endl ; 
-				} 
-			}
-		}
+  queue<int> q1;
+  q1.push(1);
+  vis1[1] = true;
+  while (!q1.empty()) {
+    int x = q1.front();
+    q1.pop();
+    for (int y : adj1[x]) {
+      if (!vis1[y]) {
+        q1.push(y);
+        vis1[y] = true ;
+	  }
 	}
+  }
 
-	// negative cycle
-	
-	for(int j = 1; j<=n ; j++){
-		for(int k =0; k < v[j].size() ; k++){
-			int dist1 = v[j][k].second, node2 = v[j][k].first ;
-			if(distFromSrc[node2] > distFromSrc[j] + dist1){
-				cout<<-1<<endl ; 
-				return 0;  
-			} 
-		}
-	}
-	
+  vector<int> distFromSrc(n + 1, minval);
+  distFromSrc[1] = 0;
+  for (int i = 0; i < n - 1; i++) {
+    for (int j = 0; j < v.size(); j++) {
+      if (distFromSrc[v[j][1]] < distFromSrc[v[j][0]] + v[j][2])
+        distFromSrc[v[j][1]] = distFromSrc[v[j][0]] + v[j][2];
+    }
+  }
 
+  vector<bool> affected(n + 1);
+  for (int j = 0; j < v.size(); j++) {
+    if (distFromSrc[v[j][1]] < distFromSrc[v[j][0]] + v[j][2])
+      affected[v[j][1]] = true;
+  }
 
-	int maxDist = 0 ; 
-	for(int i =1 ; i<=n ; i++){
-		maxDist = maxDist + distFromSrc[i] ; 		
-	}
+  vector<vector<int>> h(n + 1);
+  for (int i = 0; i < v.size(); i++) {
+    h[v[i][1]].push_back(v[i][0]);
+  }
 
-	cout<<(-maxDist)<<endl ; 
+  vector<int> vis(n + 1, false);
+  vis[n] = true;
+  queue<int> q;
+  q.push(n);
+  while (!q.empty()) {
+    auto x = q.front();
+    if (affected[x] && vis1[x]) {
+      cout << -1 << endl;
+      return 0;
+    }
+    q.pop();
+    for (int y : h[x]) {
+      if (!vis[y] )   {
+        vis[y] = true;
+        q.push(y);
+      }
+    }
+  }
 
-	return 0 ; 
+  //   for (int i = 1; i <= n; i++) {
+  //     cout << distFromSrc[i] << ' ' << newDist[i] << endl;
+  //   }
+  cout << distFromSrc[n] << endl;
+
+  return 0;
 }

@@ -1,4 +1,3 @@
-// usaco.org/index.php?page=viewproblem2&cpid=789
 #include <bits/stdc++.h>  
 using namespace std;
  
@@ -30,59 +29,57 @@ double eps = 1e-12;
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
 
-v32 p;
-v32 sz ;
-
-int find(int x) { return p[x] == -1 ? x : p[x] = find(p[x]); }
-void merge(int x, int y) {
-  x = find(x), y = find(y);
-  if (x == y)
-    return;
-  if (x > y)
-    swap(x, y);
-  p[y] = x;
-  sz[x] += sz[y] ; 
-}
 
 void solve() {
-  int n, q;
-  cin >> n >> q;
 
-  p.resize(n+1,-1), sz.resize(n+1, 1); 
-  vv32 edges;
-  for (int i = 0; i < n - 1; i++) {
-    int x, y, z;
-    cin >> x >> y >> z;
-    edges.push_back({z, x, y});
-  }
-  vv32 queries(q);
-  for (int i = 0; i < q; i++) {
+  int n, m;
+  cin>>n>>m ;
+
+  vector<vector<int>> h(n);
+  vector<int> indeg(n);
+  for (int i = 0; i < m; i++) {
     int x, y;
     cin >> x >> y;
-    queries[i] = {x, y, i}; 
+    x--, y--;
+    h[x].pb(y);
+    indeg[y]++;
   }
-  sort(rbegin(queries), rend(queries));
-  sort(rbegin(edges), rend(edges));
 
-  v32 ans(q);
-  int idx = 0;
-  for (int i = 0; i < queries.size(); i++) {
-    while (idx < edges.size() && edges[idx][0] >= queries[i][0]) {
-      merge(edges[idx][1], edges[idx][2]); 
-      idx++; 
+  queue<int> q;
+  for (int i = 0; i < n; i++)
+    if (!indeg[i])
+      q.push(i);
+
+  vector<int> ans ; 
+  
+  while (!q.empty()) {
+    int x = q.front();
+    ans.push_back(x); 
+    q.pop();
+    for (int y : h[x]) {
+      indeg[y]--;
+      if(indeg[y]==0) q.push(y); 
     }
-    ans[queries[i][2]] = sz[find(queries[i][1])] - 1; 
   }
-  for(int i = 0; i<q ; i++) cout<<ans[i]<<endl ; 
+
+  if (ans.size() < n) {
+    cout<<"IMPOSSIBLE"<<endl ;
+    return ;
+  }
+
+  for (int x : ans) {
+    cout<<(x+1)<<' ' ;
+  }
+  
 }
 int main()
 {
-freopen("mootube.in", "r", stdin);
-freopen("mootube.out", "w", stdout);
+// freopen("input.txt", "r", stdin);
+// freopen("output.txt", "w", stdout);
 
     fast_cin();
     ll t;
-    t = 1;
+    t = 1; 
     for(int it=1;it<=t;it++) {
         solve();
     }
