@@ -32,58 +32,45 @@ double eps = 1e-12;
     cout.tie(NULL)
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
-
-vector<int> manacher(string &s)
-{
-    int n = s.length();
-    vector<int> p(n + 2);
-    int l = 1, r = 1;
-    for (int i = 1; i <= n; i++)
-    {
-        p[i] = max(0, min((r - i), p[l + (r - i)]));
-        while (s[i - p[i]] == s[i + p[i]])
-        {
-            p[i]++;
-        }
-        if (i + p[i] > r)
-            l = i - p[i], r = i + p[i];
-    }
-    return vector<int>(begin(p) + 1, end(p) - 1);
-}
+#define int long long
 
 void solve()
 {
+    int n;
+    cin >> n;
+    int ans = 0;
 
-    string s;
-    cin >> s;
-
-    int n = s.length();
-    if (n % 2 == 0)
+    for (int num = n; num >= 1; num--)
     {
-        string ans = "";
-        for (int i = 0; i < n; i++)
+        for (int pos = n; pos >= 1; pos--)
         {
-            ans = ans + "#" + s[i];
+            int subans = 0, maxNum = 0 ;
+            for (int i = 1; i < pos; i++){
+                subans += i * i;
+                maxNum = max(maxNum, i * i); 
+            }
+            int x = n;
+            for (int i = pos + 1; i <= n; i++){
+                if(x == num){
+                    x--; 
+                }
+                subans += i * (x);
+                maxNum = max(maxNum, i * x);
+                x--; 
+            }
+            if(maxNum > num*pos){
+                subans = subans - maxNum + num*pos;
+            }
+            // cout << subans << ' '; 
+            ans = max(ans, subans); 
         }
-        ans = ans + "#";
-        s = ans;
     }
-
-    s = "$" + s + "^"; 
-
-    vector<int> v = manacher(s);
-    int indx = max_element(v.begin(), v.end()) - v.begin() ;
-    string ans = "";
-    ans += s[indx] ;
-    for (int i = 1; i <= v[indx]; i++){
-        ans = s[indx-i]!='#' ? s[indx - i] + ans + s[indx + i] : ans ;
-    }
-    cout << ans << endl; 
+    cout << ans << endl;
 }
-int main()
+signed main()
 {
-    freopen("input.txt", "r", stdin);
-    freopen("output.txt", "w", stdout);
+    // freopen("input.txt", "r", stdin);
+    // freopen("output.txt", "w", stdout);
 
     fast_cin();
     ll t;

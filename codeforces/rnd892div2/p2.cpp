@@ -29,49 +29,47 @@ double eps = 1e-12;
 #define fast_cin() ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
+#define int long long
 
-int numComp;
-int maxSize; 
-
-int get(int a, v32 &p){
-    return p[a]==-1 ? a : p[a] = get(p[a], p); 
-}
-
-void union_dsu(int b, int a, v32 &p, v32 & sz)
-{
-    int x = get(a, p), y = get(b, p); 
-    if(x==y)
-        return; 
-
-    if(x>y) swap(x, y);
-    numComp--;
-    p[y] = x;
-    sz[x] += sz[y];
-    maxSize = max(maxSize, sz[x]);
-}
-    void solve()
-{
-
-    int n, m; 
-    cin>>n>>m ;
-    numComp = n, maxSize = 1; 
-    v32 p(n + 1, -1);
-    v32 s(n+1, 1);
-    forn(i, m){
-        int x, y; 
-        cin>>x>>y ;
-        union_dsu(x, y, p, s);
-        cout << numComp << ' ' << maxSize << endl; 
+void solve(){
+    int n;
+    cin >> n;
+    vv32 a(n); 
+    forn(i, n){
+        int x;
+        cin >> x;
+        forn(j,x){
+            int y;
+            cin >> y;
+            a[i].push_back(y); 
+        }
     }
+    forn(i,n){
+        sort(all(a[i]));
+    }
+    if(n==1){
+        cout << a[0][0] << endl ; 
+        return;
+    }
+
+    sort(all(a));
+    int minElement = INT_MAX;
+    for (int i = 0; i<n; i++)
+    {
+        minElement = minElement > a[i][1] ? a[i][1] : minElement;
+    }
+    int ans = a[0][0] + a[0][1] ;
+    for (int i = 1; i < n; i++) ans += a[i][1];
+    cout<<ans-minElement<<endl;
 }
-int main()
+signed main()
 {
 // freopen("input.txt", "r", stdin);
 // freopen("output.txt", "w", stdout);
 
     fast_cin();
     ll t;
-    t =1 ; 
+    cin >> t;
     for(int it=1;it<=t;it++) {
         solve();
     }

@@ -13,7 +13,7 @@ typedef vector<vector<ll> > vv64;
 typedef vector<vector<p64> > vvp64;
 typedef vector<p64> vp64;
 typedef vector<p32> vp32;
-ll MOD = 998244353;
+ll MOD = 1e9 + 7;
 double eps = 1e-12;
 #define forn(i,e) for(ll i = 0; i < e; i++)
 #define forsn(i,s,e) for(ll i = s; i < e; i++)
@@ -29,49 +29,47 @@ double eps = 1e-12;
 #define fast_cin() ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
+#define int long long
 
-int numComp;
-int maxSize; 
+int dp[1 << 21][21]; 
 
-int get(int a, v32 &p){
-    return p[a]==-1 ? a : p[a] = get(p[a], p); 
-}
-
-void union_dsu(int b, int a, v32 &p, v32 & sz)
-{
-    int x = get(a, p), y = get(b, p); 
-    if(x==y)
-        return; 
-
-    if(x>y) swap(x, y);
-    numComp--;
-    p[y] = x;
-    sz[x] += sz[y];
-    maxSize = max(maxSize, sz[x]);
-}
-    void solve()
-{
-
-    int n, m; 
-    cin>>n>>m ;
-    numComp = n, maxSize = 1; 
-    v32 p(n + 1, -1);
-    v32 s(n+1, 1);
-    forn(i, m){
-        int x, y; 
-        cin>>x>>y ;
-        union_dsu(x, y, p, s);
-        cout << numComp << ' ' << maxSize << endl; 
+int sf(vv32 &mat, int i, int mask){
+    if(i==mat.size()){
+        return 1; 
     }
+
+    if(dp[mask][i]!=-1) return dp[mask][i]; 
+
+    int ans = 0 ; 
+    for (int j = 0; j<mat.size() ; j++){
+        if(mat[i][j] && (mask & (1<<j))==0){
+            ans = (ans + sf(mat, i+1, mask | (1<<j)))%MOD ; 
+        }
+    }
+    return dp[mask][i] = ans ; 
 }
-int main()
+
+void solve(){
+
+    int n ; 
+    cin>>n ;
+    memset(dp, -1, sizeof(dp)); 
+    vv32 mat(n, v32(n, 0));
+    forn(i,n){
+        forn(j,n){
+            cin>>mat[i][j] ; 
+        }
+    }
+    cout << sf(mat, 0, 0); 
+}
+signed main()
 {
 // freopen("input.txt", "r", stdin);
 // freopen("output.txt", "w", stdout);
 
     fast_cin();
     ll t;
-    t =1 ; 
+    t = 1;
     for(int it=1;it<=t;it++) {
         solve();
     }

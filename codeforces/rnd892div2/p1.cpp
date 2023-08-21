@@ -32,58 +32,47 @@ double eps = 1e-12;
     cout.tie(NULL)
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
-
-vector<int> manacher(string &s)
-{
-    int n = s.length();
-    vector<int> p(n + 2);
-    int l = 1, r = 1;
-    for (int i = 1; i <= n; i++)
-    {
-        p[i] = max(0, min((r - i), p[l + (r - i)]));
-        while (s[i - p[i]] == s[i + p[i]])
-        {
-            p[i]++;
-        }
-        if (i + p[i] > r)
-            l = i - p[i], r = i + p[i];
-    }
-    return vector<int>(begin(p) + 1, end(p) - 1);
-}
+#define int long long
 
 void solve()
 {
-
-    string s;
-    cin >> s;
-
-    int n = s.length();
-    if (n % 2 == 0)
+    int n;
+    cin >> n;
+    v32 a(n);
+    for (int i = 0; i < n; i++)
+        cin >> a[i];
+    // for(int x: a)
+    //     cout << x << ' '; 
+    // cout << endl;
+    sort(begin(a), end(a));
+    v32 b, c;
+    b.pb(a[0]);
+    for (int i = 1; i < n; i++)
     {
-        string ans = "";
-        for (int i = 0; i < n; i++)
-        {
-            ans = ans + "#" + s[i];
-        }
-        ans = ans + "#";
-        s = ans;
+        if(a[i] == b[b.size()-1])
+            b.pb(a[i]);
+        else
+            c.pb(a[i]);
     }
 
-    s = "$" + s + "^"; 
-
-    vector<int> v = manacher(s);
-    int indx = max_element(v.begin(), v.end()) - v.begin() ;
-    string ans = "";
-    ans += s[indx] ;
-    for (int i = 1; i <= v[indx]; i++){
-        ans = s[indx-i]!='#' ? s[indx - i] + ans + s[indx + i] : ans ;
+    if (!c.size() || !b.size())
+    {
+        cout << -1 << endl;
+        return;
     }
-    cout << ans << endl; 
+
+    cout << b.size() << ' ' << c.size() << endl;
+    for (int i = 0; i < b.size(); i++)
+        cout << b[i] << ' ';
+    cout << endl;
+    for (int i = 0; i < c.size(); i++)  
+        cout << c[i] << ' ';
+    cout << endl; 
 }
-int main()
+signed main()
 {
-    freopen("input.txt", "r", stdin);
-    freopen("output.txt", "w", stdout);
+    // freopen("input.txt", "r", stdin);
+    // freopen("output.txt", "w", stdout);
 
     fast_cin();
     ll t;

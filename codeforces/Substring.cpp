@@ -1,3 +1,4 @@
+// https://codeforces.com/contest/919/problem/D
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -35,46 +36,71 @@ double eps = 1e-12;
 
 void solve()
 {
-
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> adj(n + 1);
+    vv32 dp(n+1, v32(26, 0));
+    vector<int> indeg(n + 1, 0);
     string s;
     cin >> s;
-
-    // cout << s << endl;
-
-    int n = (int)s.length();
-    v32 pi(n);
-    for (int i = 1; i < n; i++)
+    s = "$" + s;
+    forn(i, m)
     {
-        int j = pi[i - 1];
-        while (j > 0 && s[i] != s[j])
+        int x, y;
+        cin >> x >> y;
+        adj[x].pb(y);
+        indeg[y]++;
+    }
+
+    // check cycle
+    vector<int> ord;
+    queue<int> q;
+    for (int i = 1; i <= n; i++)
+    {
+        if (indeg[i] == 0)
         {
-            j = pi[j - 1];
+            // cout<<"CFNVHIJKSDBCVS"<<endl ; 
+            q.push(i);
+            dp[i][s[i] - 'a'] = 1;
         }
-        if (s[i] == s[j])
-            j++;
-        pi[i] = j;
     }
-
-    // for(int x: pi)
-    //     cout << x << ' ';
-    // cout << endl;
-
-    v32 ans;
-    int j = pi[n - 1]; 
-    while(j>0){
-        ans.push_back(j);
-        j = pi[j - 1]; 
+    // cout << "BFIDF" << endl;
+    while (!q.empty())
+    {
+        int x = q.front();
+        q.pop();
+        ord.pb(x);
+        for (int y : adj[x])
+        {
+            indeg[y]--;
+            for (int j = 0; j < 26; j++)
+            {
+                dp[y][j] = max(dp[y][j], dp[x][j] + (s[y] - 'a' == j));
+            }
+            if (indeg[y] == 0)
+                q.push(y);
+        }
     }
-
-    sort(ans.begin(), ans.end()); 
-
-    for (int x : ans)
-        cout << x << ' ';
+    if (ord.size() < n)
+    {
+        cout << -1 << ln;
+        return;
+    }
+    int ans = 0;
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 0; j < 26; j++)
+        {
+            ans = max(ans, dp[i][j]);
+        }
+    }
+    cout << ans << endl;
 }
 int main()
 {
-    // freopen("output.txt", "w", stdout);
     // freopen("input.txt", "r", stdin);
+    // freopen("output.txt", "w", stdout);
+
     fast_cin();
     ll t;
     t = 1;

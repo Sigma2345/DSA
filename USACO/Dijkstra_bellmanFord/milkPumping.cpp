@@ -29,49 +29,44 @@ double eps = 1e-12;
 #define fast_cin() ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
+ 
 
-int numComp;
-int maxSize; 
+void solve(){
 
-int get(int a, v32 &p){
-    return p[a]==-1 ? a : p[a] = get(p[a], p); 
-}
-
-void union_dsu(int b, int a, v32 &p, v32 & sz)
-{
-    int x = get(a, p), y = get(b, p); 
-    if(x==y)
-        return; 
-
-    if(x>y) swap(x, y);
-    numComp--;
-    p[y] = x;
-    sz[x] += sz[y];
-    maxSize = max(maxSize, sz[x]);
-}
-    void solve()
-{
-
-    int n, m; 
+    int n, m ; 
     cin>>n>>m ;
-    numComp = n, maxSize = 1; 
-    v32 p(n + 1, -1);
-    v32 s(n+1, 1);
-    forn(i, m){
-        int x, y; 
-        cin>>x>>y ;
-        union_dsu(x, y, p, s);
-        cout << numComp << ' ' << maxSize << endl; 
+
+    vector< vector <vector<int> > > adj(n+1);    
+    for(int i = 0 ; i<m ; i++){
+        int a, b, c, f; 
+        adj[a].pb({b, c, f});
+        adj[b].pb({a, c, f});
     }
+    vector<int> flow(n + 1, 0), cost(n+1, INT_MAX);
+    flow[1] = INT_MAX;
+    cost[1] = 0; 
+
+    set< pair <int, int> > s; 
+    s.insert({0, 1});
+    while(!s.empty()){
+        auto x = *s.begin();
+        s.erase(s.begin());
+
+        for(auto child: adj[x.second]){
+            int netflow = min(flow[x.second], child[2]);
+            int totalCost = cost[x.second] + child[1];  
+        }
+    }
+
 }
 int main()
 {
-// freopen("input.txt", "r", stdin);
-// freopen("output.txt", "w", stdout);
+freopen("pump.in", "r", stdin);
+freopen("pump.out", "w", stdout);
 
     fast_cin();
     ll t;
-    t =1 ; 
+    cin >> t;
     for(int it=1;it<=t;it++) {
         solve();
     }
